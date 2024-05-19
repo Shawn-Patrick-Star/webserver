@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.l": "code-text-binary",
+        "netdb.h": "c",
+        "algorithm": "c"
+    }
+}
