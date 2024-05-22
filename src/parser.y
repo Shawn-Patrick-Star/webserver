@@ -204,6 +204,14 @@ request_line: token t_sp text t_sp text t_crlf {
 
 request_header: token ows t_colon ows text ows t_crlf {
 					YPRINTF("request_Header:\n%s\n%s\n",$1,$5);
+					while(parsing_request->header_count >= parsing_request->MAX_HEADER_COUNT){
+						parsing_request->MAX_HEADER_COUNT = parsing_request->MAX_HEADER_COUNT * 2;
+						Request_header* new_headers = (Request_header *) malloc(sizeof(Request_header) * parsing_request->MAX_HEADER_COUNT);
+						for(int i = 0; i < parsing_request->header_count; i++){
+							new_headers[i] = parsing_request->headers[i];
+						}
+						parsing_request->headers = new_headers;
+					}
 					strcpy(parsing_request->headers[parsing_request->header_count].header_name, $1);
 					strcpy(parsing_request->headers[parsing_request->header_count].header_value, $5);
 					parsing_request->header_count++;

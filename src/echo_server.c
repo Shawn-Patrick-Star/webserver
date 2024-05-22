@@ -94,22 +94,19 @@ int main(int argc, char* argv[])
 
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
-#ifdef DEBUG
-            printf("--------Received--------\n%s\n", buf);
-#endif
             int status_code = 0;
             Request *request = parse(buf, readret, client_sock, &status_code);
-#ifdef DEBUG            
-            printf("Status code: %d\n", status_code);
-#endif            
+            
             if(status_code == HTTP_501){
                 copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
-            }else if(status_code == HTTP_400){
+            }
+            else if(status_code == HTTP_400){
                 copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
             }
-#ifdef DEBUG
-            printf("--------Sending--------\n%s\n", buf);
-#endif            
+            else{
+                copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
+            }
+         
             if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
             {
                 close_socket(client_sock);

@@ -83,7 +83,9 @@ Request * parse(const char *buffer, int size, int socketFd, int *status_code) {
 		Request *request = (Request *) malloc(sizeof(Request));
         request->header_count = 0;
         //TODO You will need to handle resizing this in parser.y
-        request->headers = (Request_header *) malloc(sizeof(Request_header)*10);
+		request->MAX_HEADER_COUNT = 2;
+        request->headers = (Request_header *) malloc(sizeof(Request_header) * request->MAX_HEADER_COUNT);
+		
 		set_parsing_options(buf, i, request);
 
 		if (yyparse() == SUCCESS) {
