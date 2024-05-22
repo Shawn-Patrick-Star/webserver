@@ -117,6 +117,8 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "Error sending to client.\n");
                 return EXIT_FAILURE;
             }
+            // yy_delete_buffer(buf);
+            yylex_destroy();
             memset(buf, 0, BUF_SIZE);
         } 
 

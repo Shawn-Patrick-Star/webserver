@@ -78,7 +78,6 @@ Request * parse(const char *buffer, int size, int socketFd, int *status_code) {
 
 	}
 
-
     //Valid End State
 	if (state == STATE_CRLFCRLF) {
 		Request *request = (Request *) malloc(sizeof(Request));
