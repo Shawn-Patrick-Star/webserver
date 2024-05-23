@@ -2,6 +2,8 @@
     "files.associations": {
         "*.l": "code-text-binary",
         "netdb.h": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "socket.h": "c",
+        "stdio.h": "c"
     }
 }

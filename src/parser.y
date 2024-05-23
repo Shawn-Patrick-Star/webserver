@@ -204,6 +204,7 @@ request_line: token t_sp text t_sp text t_crlf {
 
 request_header: token ows t_colon ows text ows t_crlf {
 					YPRINTF("request_Header:\n%s\n%s\n",$1,$5);
+					// buffer extension
 					while(parsing_request->header_count >= parsing_request->MAX_HEADER_COUNT){
 						parsing_request->MAX_HEADER_COUNT = parsing_request->MAX_HEADER_COUNT * 2;
 						Request_header* new_headers = (Request_header *) malloc(sizeof(Request_header) * parsing_request->MAX_HEADER_COUNT);

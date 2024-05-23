@@ -1,13 +1,11 @@
+#ifndef PARSE_H
+#define PARSE_H
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define SUCCESS 0
-
-enum {
-	NORMAL = 0, HTTP_501, HTTP_400
-};
-
 
 //Header field
 typedef struct
@@ -30,8 +28,10 @@ typedef struct
 
 } Request;
 
-Request* parse(const char *buffer, int size,int socketFd, int *status_code);
+Request* parse(const char *buffer, int size,int socketFd);
 
 // functions decalred in parser.y
 int yyparse();
 void set_parsing_options(char *buf, size_t i, Request *request);
+
+#endif //PARSE_H

@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "parse.h"
-
+#include "respend.h"
 
 int main(int argc, char **argv)
 {  
@@ -24,26 +24,24 @@ int main(int argc, char **argv)
   int readRet = read(fd_in, buf, 8192);
   // Parse the buffer to the parse function. You will need to pass the socket fd and the buffer would need to
   // be read from that fd
-  int status_code;
-  Request *request = parse(buf, readRet, fd_in, &status_code);
-  if(status_code == HTTP_501){
-    printf("HTTP/1.1 501 Not Implemented\r\n\r\n");
-    return 0;
-  }
-  else if(status_code == HTTP_400){
-    printf("HTTP/1.1 400 Bad Request\r\n\r\n");
+
+  Request *request = parse(buf, readRet, fd_in);
+  if(request == NULL){
+    printf("Failed to parse the request\n");
     return 0;
   }
   else{
     // Just printing everything
-    printf("Http Method %s\n", request->http_method);
-    printf("Http Version %s\n", request->http_version);
-    printf("Http Uri %s\n", request->http_uri);
-    for (index = 0; index < request->header_count; index++)
-    {
-      printf("Request Header\n");
-      printf("Header name %s Header Value %s\n", request->headers[index].header_name, request->headers[index].header_value);
-    }
+    respend(request, buf);
+    printf("%s", buf);
+    // printf("Http Method %s\n", request->http_method);
+    // printf("Http Version %s\n", request->http_version);
+    // printf("Http Uri %s\n", request->http_uri);
+    // for (index = 0; index < request->header_count; index++)
+    // {
+    //   printf("Request Header\n");
+    //   printf("Header name %s Header Value %s\n", request->headers[index].header_name, request->headers[index].header_value);
+    // }
   }
   free(request->headers);
   free(request);

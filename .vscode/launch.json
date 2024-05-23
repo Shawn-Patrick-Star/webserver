@@ -8,9 +8,9 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/echo_server",
+            "program": "${workspaceFolder}/example",
             "args": [
-                
+                "./samples/HTTP_505"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

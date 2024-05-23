@@ -19,17 +19,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "respend.h"
 #include "parse.h"
 
 #define ECHO_PORT 9999
 #define BUF_SIZE 4096
-
-void copyString(char *dest, const char *src, int len){
-    memset(dest, 0, BUF_SIZE);
-    for(int i = 0; i < len; i++){
-        dest[i] = src[i];
-    }
-}
 
 
 int close_socket(int sock)
@@ -41,6 +35,8 @@ int close_socket(int sock)
     }
     return 0;
 }
+
+
 
 int main(int argc, char* argv[])
 {
@@ -94,19 +90,31 @@ int main(int argc, char* argv[])
 
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
-            int status_code = 0;
-            Request *request = parse(buf, readret, client_sock, &status_code);
+            Request *request = parse(buf, readret, client_sock);
+            respend(request, buf);
+            // switch (status_code)
+            // {
+            // case HTTP_200:
+            //     copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
+            //     break;
+            // case HTTP_501:
+            //     copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
+            //     break;
+            // case HTTP_400:
+            //     copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
+            //     break;
+            // case HTTP_404:
+            //     copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
+            //     break;
+            // case HTTP_505:
+            //     copyString(buf, "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n", 43);
+            //     break;
+            // default:
+            //     printf("Unknown status code: %d\n", status_code);
+            //     break;
+            // }
             
-            if(status_code == HTTP_501){
-                copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
-            }
-            else if(status_code == HTTP_400){
-                copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
-            }
-            else{
-                copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
-            }
-         
+        
             if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
             {
                 close_socket(client_sock);
@@ -114,7 +122,7 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "Error sending to client.\n");
                 return EXIT_FAILURE;
             }
-            // yy_delete_buffer(buf);
+            // 非常重要的一步，释放 yylex 内存
             yylex_destroy();
             memset(buf, 0, BUF_SIZE);
         } 

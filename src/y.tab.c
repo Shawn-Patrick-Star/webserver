@@ -569,7 +569,7 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,   112,   112,   113,   116,   122,   126,   154,   155,   158,
-     161,   169,   173,   185,   189,   193,   198,   205,   219,   232
+     161,   169,   173,   185,   189,   193,   198,   205,   220,   233
 };
 #endif
 
@@ -1495,6 +1495,7 @@ yyreduce:
 #line 205 "src/parser.y"
                                                       {
 					YPRINTF("request_Header:\n%s\n%s\n",(yyvsp[-6].str),(yyvsp[-2].str));
+					// buffer extension
 					while(parsing_request->header_count >= parsing_request->MAX_HEADER_COUNT){
 						parsing_request->MAX_HEADER_COUNT = parsing_request->MAX_HEADER_COUNT * 2;
 						Request_header* new_headers = (Request_header *) malloc(sizeof(Request_header) * parsing_request->MAX_HEADER_COUNT);
@@ -1507,20 +1508,20 @@ yyreduce:
 					strcpy(parsing_request->headers[parsing_request->header_count].header_value, (yyvsp[-2].str));
 					parsing_request->header_count++;
 				}
-#line 1511 "y.tab.c"
+#line 1512 "y.tab.c"
     break;
 
   case 19:
-#line 232 "src/parser.y"
+#line 233 "src/parser.y"
                                             {
 			YPRINTF("parsing_request: Matched Success.\n");
 			return SUCCESS;
 		}
-#line 1520 "y.tab.c"
+#line 1521 "y.tab.c"
     break;
 
 
-#line 1524 "y.tab.c"
+#line 1525 "y.tab.c"
 
       default: break;
     }
@@ -1752,7 +1753,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 237 "src/parser.y"
+#line 238 "src/parser.y"
 
 
 /* C code */

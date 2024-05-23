@@ -1,41 +1,10 @@
 #include "parse.h"
 #include <stdbool.h>
 
-bool strIsEqual(char *str1, const char *str2){
-	int i = 0;
-	while(str1[i] != '\0' && str2[i] != '\0'){
-		if(str1[i] != str2[i]){
-			return false;
-		}
-		i++;
-	}
-	if(str1[i] == '\0' && str2[i] == '\0'){
-		return true;
-	}
-	return false;
-}
-void isValidMethod(char *method, int *status_code){
-	char ch = method[0];
-	int i = 0;
-	char buf[10];
-	while(ch != '\0'){
-		buf[i++] = ch;
-		ch = method[i];
-	}
-	buf[i] = '\0';
-	if(strIsEqual(buf, "GET") || strIsEqual(buf, "POST") || strIsEqual(buf, "HEAD")){
-		*status_code = NORMAL;
-	}else{
-		*status_code = HTTP_501;
-	}
-
-}
-
-
 /**
 * Given a char buffer returns the parsed request headers
 */
-Request * parse(const char *buffer, int size, int socketFd, int *status_code) {
+Request * parse(const char *buffer, int size, int socketFd) {
   //Differant states in the state machine
 	enum {
 		STATE_START = 0, STATE_CR, STATE_CRLF, STATE_CRLFCR, STATE_CRLFCRLF
@@ -83,20 +52,28 @@ Request * parse(const char *buffer, int size, int socketFd, int *status_code) {
 		Request *request = (Request *) malloc(sizeof(Request));
         request->header_count = 0;
         //TODO You will need to handle resizing this in parser.y
-		request->MAX_HEADER_COUNT = 2;
+		request->MAX_HEADER_COUNT = 5;
         request->headers = (Request_header *) malloc(sizeof(Request_header) * request->MAX_HEADER_COUNT);
 		
 		set_parsing_options(buf, i, request);
 
 		if (yyparse() == SUCCESS) {
-			isValidMethod(request->http_method, status_code);
+			// if(!isValidMethod(request->http_method)) {
+			// 	*status_code = HTTP_501;
+			// 	return NULL;
+			// } 
+			// if(!isValidVersion(request->http_version)){
+			// 	*status_code = HTTP_505;
+			// 	return NULL;
+			// }
+			
+			// *status_code = HTTP_200;
 			return request;
 		}else{
 			// 向下执行
 		}
 	}
     //TODO Handle Malformed Requests
-	*status_code = HTTP_400;
-    // printf("Parsing Failed\n");
+	// *status_code = HTTP_400;
 	return NULL;
 }
