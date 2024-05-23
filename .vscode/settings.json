@@ -4,6 +4,7 @@
         "netdb.h": "c",
         "algorithm": "c",
         "socket.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "cerrno": "c"
     }
 }

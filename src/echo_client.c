@@ -20,6 +20,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #define ECHO_PORT 9999
 #define BUF_SIZE 4096
@@ -32,7 +33,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    char buf[BUF_SIZE];
+
         
     int status, sock;
     struct addrinfo hints;
@@ -61,17 +62,17 @@ int main(int argc, char* argv[])
     }
         
     char msg[BUF_SIZE]; 
-    int fd_in = open(argv[3], O_RDONLY);
-    if (fd_in < 0)
-    {
-        printf("Failed to open the file\n");
-        return 0;
+    FILE *fp = fopen(argv[3], "r");
+    if (fp == NULL) {
+        fprintf(stderr, "Error opening file: %s\n", strerror(errno));
+        return 1;
     }
-    int readRet = read(fd_in, msg, BUF_SIZE);
-    
+    int readRet = fread(msg, 1, BUF_SIZE, fp);
     int bytes_received;
     fprintf(stdout, "-------------Sending-----------\n%s", msg);
     send(sock, msg , strlen(msg), 0);
+
+    char buf[BUF_SIZE];
     if((bytes_received = recv(sock, buf, BUF_SIZE, 0)) > 1)
     {
         buf[bytes_received] = '\0';

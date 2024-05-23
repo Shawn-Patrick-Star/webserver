@@ -58,22 +58,11 @@ Request * parse(const char *buffer, int size, int socketFd) {
 		set_parsing_options(buf, i, request);
 
 		if (yyparse() == SUCCESS) {
-			// if(!isValidMethod(request->http_method)) {
-			// 	*status_code = HTTP_501;
-			// 	return NULL;
-			// } 
-			// if(!isValidVersion(request->http_version)){
-			// 	*status_code = HTTP_505;
-			// 	return NULL;
-			// }
-			
-			// *status_code = HTTP_200;
 			return request;
 		}else{
 			// 向下执行
 		}
 	}
     //TODO Handle Malformed Requests
-	// *status_code = HTTP_400;
 	return NULL;
 }

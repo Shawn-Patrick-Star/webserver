@@ -92,28 +92,6 @@ int main(int argc, char* argv[])
         {
             Request *request = parse(buf, readret, client_sock);
             respend(request, buf);
-            // switch (status_code)
-            // {
-            // case HTTP_200:
-            //     copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
-            //     break;
-            // case HTTP_501:
-            //     copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
-            //     break;
-            // case HTTP_400:
-            //     copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
-            //     break;
-            // case HTTP_404:
-            //     copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
-            //     break;
-            // case HTTP_505:
-            //     copyString(buf, "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n", 43);
-            //     break;
-            // default:
-            //     printf("Unknown status code: %d\n", status_code);
-            //     break;
-            // }
-            
         
             if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
             {
