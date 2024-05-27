@@ -9,7 +9,7 @@
 
 #include "parse.h"
 #include "respend.h"
-
+#include "log.h"
 
 int main(int argc, char **argv)
 {
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 		//   printf("Header name %s Header Value %s\n", request->headers[index].header_name, request->headers[index].header_value);
 		// }
 	}
+
 	free(request->headers);
 	free(request);
 	return 0;

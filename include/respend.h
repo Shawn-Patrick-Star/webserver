@@ -3,6 +3,9 @@
 
 #include "parse.h"
 #include <stdbool.h>
+
+#define default_file_path "./static_site/index.html"
+
 typedef enum {
     HTTP_200 = 0, 
     HTTP_400, 
@@ -25,9 +28,6 @@ bool strIsEqual(char *str1, const char *str2);
 HTTP_METHOD method_str2enum(char * method);
 
 void copyString(char *dest, const char *src, int len);
-
-
-
 
 void respend(Request *request, char* buf);
 

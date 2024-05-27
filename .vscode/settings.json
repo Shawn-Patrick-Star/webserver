@@ -5,6 +5,7 @@
         "algorithm": "c",
         "socket.h": "c",
         "stdio.h": "c",
-        "cerrno": "c"
+        "cerrno": "c",
+        "log.h": "c"
     }
 }

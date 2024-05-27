@@ -1495,7 +1495,7 @@ yyreduce:
 #line 205 "src/parser.y"
                                                       {
 					YPRINTF("request_Header:\n%s\n%s\n",(yyvsp[-6].str),(yyvsp[-2].str));
-					// buffer extension
+					// buffer extension -- dyx
 					while(parsing_request->header_count >= parsing_request->MAX_HEADER_COUNT){
 						parsing_request->MAX_HEADER_COUNT = parsing_request->MAX_HEADER_COUNT * 2;
 						Request_header* new_headers = (Request_header *) malloc(sizeof(Request_header) * parsing_request->MAX_HEADER_COUNT);

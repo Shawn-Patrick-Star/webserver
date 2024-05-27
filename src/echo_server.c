@@ -12,7 +12,6 @@
 *******************************************************************************/
 
 #include <netinet/in.h>
-#include <netinet/ip.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +20,7 @@
 
 #include "respend.h"
 #include "parse.h"
-
+#include "log.h"
 #define ECHO_PORT 9999
 #define BUF_SIZE 4096
 
@@ -92,7 +91,8 @@ int main(int argc, char* argv[])
         {
             Request *request = parse(buf, readret, client_sock);
             respend(request, buf);
-        
+            ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
+            ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
             if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
             {
                 close_socket(client_sock);

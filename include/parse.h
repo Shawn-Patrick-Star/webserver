@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #define SUCCESS 0
-
+#define default_header_count 5
 //Header field
 typedef struct
 {

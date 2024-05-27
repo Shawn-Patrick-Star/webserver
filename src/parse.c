@@ -52,7 +52,7 @@ Request * parse(const char *buffer, int size, int socketFd) {
 		Request *request = (Request *) malloc(sizeof(Request));
         request->header_count = 0;
         //TODO You will need to handle resizing this in parser.y
-		request->MAX_HEADER_COUNT = 5;
+		request->MAX_HEADER_COUNT = default_header_count;
         request->headers = (Request_header *) malloc(sizeof(Request_header) * request->MAX_HEADER_COUNT);
 		
 		set_parsing_options(buf, i, request);
