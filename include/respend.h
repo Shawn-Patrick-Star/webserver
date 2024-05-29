@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #define default_file_path "./static_site/index.html"
+// #define default_file_path "./static_site/index404.html"
 
 typedef enum {
     HTTP_200 = 0, 

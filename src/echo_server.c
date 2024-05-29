@@ -27,12 +27,12 @@
 
 int close_socket(int sock)
 {
-    if (close(sock))
+    if (close(sock) == -1)
     {
         fprintf(stderr, "Failed closing socket.\n");
-        return 1;
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 
@@ -89,10 +89,12 @@ int main(int argc, char* argv[])
 
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
+            printf("----------recv---------\n %s\n", buf);
             Request *request = parse(buf, readret, client_sock);
             respend(request, buf);
-            ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
-            ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
+            // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
+            // ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
+            printf("----------send---------\n %s\n", buf);
             if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
             {
                 close_socket(client_sock);
@@ -100,12 +102,13 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "Error sending to client.\n");
                 return EXIT_FAILURE;
             }
+
             // 非常重要的一步，释放 yylex 内存
             yylex_destroy();
             memset(buf, 0, BUF_SIZE);
         } 
 
-        if (readret == -1)
+        if (readret == -1) // 接受错误 连接断开
         {
             close_socket(client_sock);
             close_socket(sock);
@@ -113,7 +116,7 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
-        if (close_socket(client_sock))
+        if (!close_socket(client_sock))
         {
             close_socket(sock);
             fprintf(stderr, "Error closing client socket.\n");

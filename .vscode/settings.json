@@ -6,6 +6,7 @@
         "socket.h": "c",
         "stdio.h": "c",
         "cerrno": "c",
-        "log.h": "c"
+        "log.h": "c",
+        "vector": "c"
     }
 }

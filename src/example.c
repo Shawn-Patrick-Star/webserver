@@ -10,6 +10,7 @@
 #include "parse.h"
 #include "respend.h"
 #include "log.h"
+#include "buffer.h"
 
 int main(int argc, char **argv)
 {
@@ -26,6 +27,7 @@ int main(int argc, char **argv)
     }
 
 	char buf[8192];
+
 	int readRet = fread(buf, 1, 8192, fp);
 
 	// Parse the buffer to the parse function. You will need to pass the socket fd and the buffer would need to

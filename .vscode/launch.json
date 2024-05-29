@@ -8,9 +8,9 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/example",
+            "program": "${workspaceFolder}/liso_server",
             "args": [
-                "./samples/HTTP_505"
+
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

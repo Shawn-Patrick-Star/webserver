@@ -50,30 +50,28 @@ void copyString(char *dest, const char *src, int len){
 }
 
 void respend(Request *request, char* buf){
-    char *path;
-
+    char path[128];
 
     if(request == NULL){
         copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
         return;
     }
+
+    
     // 404
-    if(request->http_uri[0] != '/'){
-        path = default_file_path;
-        FILE *file = fopen(path, "r");
-        if(file == NULL){
-            fprintf(stderr, "Error opening file: %s\n", strerror(errno));
-            copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
-            return;
-        }
-        fclose(file);
+    if(strIsEqual(request->http_uri, "/")){
+        sprintf(path, "%s", default_file_path);
     }
     else{
-        // 等待补充
-        path = request->http_uri;
-        // Host 地址 + path
-        // 判断 文件（网站）地址 是否存在
+        sprintf(path, "%s%s", "./static_site", request->http_uri);
     }
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        fprintf(stderr, "Error opening file: %s\n", strerror(errno));
+        copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
+        return;
+    }
+    fclose(file);
 
     // 505
     if(!strIsEqual(request->http_version, "HTTP/1.1")){
@@ -81,45 +79,43 @@ void respend(Request *request, char* buf){
         return;
     }
 
-
     HTTP_METHOD method = method_str2enum(request->http_method);
     switch (method)
     {
     case GET:
-        
+        handle_get_request(request, buf);
         break;
     case POST:
         
         break;
     case HEAD:
-            
+        copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);    
         break;
     default:
         copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
-        return;
+        break;
     }
-    return;
+
 }
 
 
 
 void handle_get_request(Request *request, char *buf){
-    char *path;
+    char path[128];
     
-    if(request->http_uri[0] == '/'){
-        path = default_file_path;
-        FILE *fp = fopen(path, "r");
-        // 改成追加字符串
-        copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
-        // 以下内容都是随便写的
-        int BUF_SIZE = 1024;
-        int len = fread(buf + 19, 1, BUF_SIZE - 19, fp);
-        fclose(fp);
+    if(strIsEqual(request->http_uri, "/")){
+        sprintf(path, "%s", default_file_path);
     }
     else{
-        // 等待补充
-        path = request->http_uri;
-        // Host 地址 + path
-        // 判断 文件（网站）地址 是否存在
+        sprintf(path, "%s%s", "./static_site", request->http_uri);
     }
+    FILE *fp = fopen(path, "r");
+    copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
+    int BUF_SIZE = 1024;
+    int len = fread(buf + 19, 1, BUF_SIZE - 19, fp);
+    fclose(fp);
 }
+
+// void handle_head_request(Request *request, char *buf){
+
+// }

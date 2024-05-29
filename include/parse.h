@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define SUCCESS 0
 #define default_header_count 5
@@ -25,7 +26,7 @@ typedef struct
 	Request_header *headers;
 	int header_count;
 	int MAX_HEADER_COUNT;
-
+	
 } Request;
 
 Request* parse(const char *buffer, int size,int socketFd);
