@@ -1,4 +1,4 @@
-#include "respend.h"
+#include "respond.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -49,7 +49,7 @@ void copyString(char *dest, const char *src, int len){
     }
 }
 
-void respend(Request *request, char* buf){
+void respond(Request *request, char* buf){
     char path[128];
 
     if(request == NULL){

@@ -1,5 +1,5 @@
-#ifndef RESPEND_H
-#define RESPEND_H
+#ifndef RESPOND_H
+#define RESPOND_H
 
 #include "parse.h"
 #include <stdbool.h>
@@ -30,6 +30,6 @@ HTTP_METHOD method_str2enum(char * method);
 
 void copyString(char *dest, const char *src, int len);
 
-void respend(Request *request, char* buf);
+void respond(Request *request, char* buf);
 
-#endif //RESPEND_H
+#endif //RESPOND_H

@@ -8,7 +8,7 @@
 #include <errno.h>
 
 #include "parse.h"
-#include "respend.h"
+#include "respond.h"
 #include "log.h"
 #include "buffer.h"
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	{
 		// Just printing everything
 		printf("%s", buf);		
-		respend(request, buf);
+		respond(request, buf);
 		printf("%s", buf);
 		// printf("Http Method %s\n", request->http_method);
 		// printf("Http Version %s\n", request->http_version);

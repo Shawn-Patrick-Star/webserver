@@ -5,7 +5,7 @@ OBJ_DIR := obj
 SRC := $(wildcard $(SRC_DIR)/*.c)
 # all objects
 OBJ := $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o $(OBJ_DIR)/parse.o \
-		$(OBJ_DIR)/respend.o $(OBJ_DIR)/log.o $(OBJ_DIR)/buffer.o 
+		$(OBJ_DIR)/respond.o $(OBJ_DIR)/log.o $(OBJ_DIR)/buffer.o 
 
 # all binaries
 BIN := example liso_server liso_client

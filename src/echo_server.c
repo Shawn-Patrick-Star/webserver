@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "respend.h"
+#include "respond.h"
 #include "parse.h"
 #include "log.h"
 #define ECHO_PORT 9999
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         {
             printf("----------recv---------\n %s\n", buf);
             Request *request = parse(buf, readret, client_sock);
-            respend(request, buf);
+            respond(request, buf);
             // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
             // ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
             printf("----------send---------\n %s\n", buf);
