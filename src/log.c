@@ -3,7 +3,7 @@
 #include <time.h>
 #include <arpa/inet.h>
 #include <stdio.h>
-
+#include <string.h>
 void ERROR_LOG(struct sockaddr_in cli_addr, int fd, const char* msg){
     time_t now;
     time(&now);

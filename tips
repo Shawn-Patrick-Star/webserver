@@ -1,0 +1,47 @@
+netstat -aon|findstr "8080"
+taskkill /pid [进程码] -t(结束该进程) -f(强制结束该进程以及所有子进程)
+
+
+// void handle_get_request(Request *request, Buffer* respend_buf_p){
+//     char path[128];
+//     // 确定文件路径
+//     if(strIsEqual(request->http_uri, "/"))
+//         sprintf(path, "%s", default_file_path);
+//     else
+//         sprintf(path, "%s%s", "./static_site", request->http_uri);
+    
+//     // 确定文件类型
+//     const char * dot = strrchr(path, '.');
+//     if(dot == NULL){
+//         fprintf(stderr, "Error: file type not found\n");
+//         return;
+//     }
+//     char file_type[16];
+//     memset(file_type, 0, 16);
+//     int i = 0;
+//     while(dot[i+1] != '\0'){
+//         file_type[i] = dot[i+1];
+//         i++;
+//     }
+//     // 读取文件内容
+//     Buffer file_content;
+//     init_buffer(&file_content, 256);
+//     FILE *fp = fopen(path, "r");
+//     char temp[1024];
+//     memset(temp, 0, 1024);
+//     size_t cur_len = 0;  // 已读取字节数
+//     while (!feof(fp)) {
+//         size_t len = fread(temp, 1, 1024, fp);
+//         append_buffer(&file_content, temp, len);
+//         cur_len += len;
+//     }
+//     fclose(fp);
+//     char buf[256];
+//     sprintf(buf, "HTTP/1.1 200 OK\r\n");
+//     sprintf(buf, "%sContent-Length: %ld\r\n", buf, cur_len);
+//     sprintf(buf, "%sContent-Type: text/%s\r\n\r\n", buf, file_type);
+//     append_buffer(respend_buf_p, buf, strlen(buf));
+//     append_buffer(respend_buf_p, file_content.buf, file_content.length);
+    
+//     free_buffer(&file_content);
+// }

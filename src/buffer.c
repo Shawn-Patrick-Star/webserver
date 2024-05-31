@@ -1,6 +1,6 @@
 #include "buffer.h"
 #include <string.h>
-
+#include <stdlib.h>
 
 void init_buffer(Buffer buffer, int capacity){
     buffer.buf = (char *)malloc(capacity);

@@ -102,17 +102,38 @@ void respend(Request *request, char* buf){
 
 void handle_get_request(Request *request, char *buf){
     char path[128];
-    
-    if(strIsEqual(request->http_uri, "/")){
+    // 确定文件路径
+    if(strIsEqual(request->http_uri, "/"))
         sprintf(path, "%s", default_file_path);
-    }
-    else{
+    else
         sprintf(path, "%s%s", "./static_site", request->http_uri);
+    
+    // 确定文件类型
+    const char * dot = strrchr(path, '.');
+    if(dot == NULL){
+        fprintf(stderr, "Error: file type not found\n");
+        return;
     }
+    char file_type[16];
+    memset(file_type, 0, 16);
+    int i = 0;
+    while(dot[i+1] != '\0'){
+        file_type[i] = dot[i+1];
+        i++;
+    }
+
+    // 读取文件内容
     FILE *fp = fopen(path, "r");
-    copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);
-    int BUF_SIZE = 1024;
-    int len = fread(buf + 19, 1, BUF_SIZE - 19, fp);
+    char temp[1024];
+    int len = fread(temp, 1, 1024, fp);
+
+    // 生成响应头
+    copyString(buf, "HTTP/1.1 200 OK\r\n", 17);
+    sprintf(buf, "%sContent-Length: %ld\r\n", buf, len);
+    sprintf(buf, "%sContent-Type: text/%s\r\n\r\n", buf, file_type);
+    // 生成响应体
+    memcpy(buf + strlen(buf), temp, len);
+
     fclose(fp);
 }
 
