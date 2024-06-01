@@ -59,19 +59,19 @@ void respond(Request *request, char* buf){
 
     
     // 404
-    if(strIsEqual(request->http_uri, "/")){
-        sprintf(path, "%s", default_file_path);
-    }
-    else{
-        sprintf(path, "%s%s", "./static_site", request->http_uri);
-    }
-    FILE *file = fopen(path, "r");
-    if(file == NULL){
-        fprintf(stderr, "Error opening file: %s\n", strerror(errno));
-        copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
-        return;
-    }
-    fclose(file);
+    // if(strIsEqual(request->http_uri, "/")){
+    //     sprintf(path, "%s", default_file_path);
+    // }
+    // else{
+    //     sprintf(path, "%s%s", "./static_site", request->http_uri);
+    // }
+    // FILE *file = fopen(path, "r");
+    // if(file == NULL){
+    //     fprintf(stderr, "Error opening file: %s\n", strerror(errno));
+    //     copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
+    //     return;
+    // }
+    // fclose(file);
 
     // 505
     if(!strIsEqual(request->http_version, "HTTP/1.1")){
@@ -124,6 +124,11 @@ void handle_get_request(Request *request, char *buf){
 
     // 读取文件内容
     FILE *fp = fopen(path, "r");
+    if(fp == NULL){
+        fprintf(stderr, "Error opening file: %s\n", strerror(errno));
+        copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
+        return;
+    }
     char temp[1024];
     int len = fread(temp, 1, 1024, fp);
 
