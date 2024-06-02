@@ -3,7 +3,14 @@
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
-
+#include <time.h>
+void get_time(char *buffer, size_t len){
+    memset(buffer, 0, len);
+    time_t now = time(NULL);
+    struct tm *local_time = localtime(&now);
+    // 格式：Sun, 02 Jun 2024 02:42:16 GMT
+    strftime(buffer, len, "%a, %d %b %Y %H:%M:%S GMT", local_time);
+}
 
 bool strIsEqual(char *str1, const char *str2){
 	int i = 0;
@@ -133,11 +140,19 @@ void handle_get_request(Request *request, char *buf){
     int len = fread(temp, 1, 1024, fp);
 
     // 生成响应头
+    char time_buffer[80];
+    get_time(time_buffer, sizeof(time_buffer));
+
     copyString(buf, "HTTP/1.1 200 OK\r\n", 17);
-    sprintf(buf, "%sContent-Length: %ld\r\n", buf, len);
+    sprintf(buf, "%sServer: liso/1.0\r\n", buf);
+    sprintf(buf, "%sDate: %s\r\n", buf, time_buffer);
+    sprintf(buf, "%sContent-Length: %d\r\n", buf, len);
     sprintf(buf, "%sContent-Type: text/%s\r\n\r\n", buf, file_type);
     // 生成响应体
+    int head_len = strlen(buf);
     memcpy(buf + strlen(buf), temp, len);
+    buf[head_len + len] = '\0';
+
 
     fclose(fp);
 }

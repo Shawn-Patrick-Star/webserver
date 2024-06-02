@@ -90,6 +90,22 @@ int main(int argc, char* argv[])
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
             printf("----------recv---------\n %s\n", buf);
+            // int count = 0;
+            // int start = 0;
+            // for(int i = 0; i < readret; i++){
+            //     if(strncmp(buf + i, "\r\n\r\n", 4) == 0){
+            //         char temp[512];
+            //         memset(temp, 0, 512);
+            //         strncpy(temp, buf + start, i + 4 - start);
+            //         // printf("-------------------\n %s\n", temp);
+            //         Request *request = parse(temp, readret, client_sock);
+            //         respond(request, temp);
+            //         printf("----------send---------\n %s\n", temp);
+            //         start = i + 4;
+            //         count++;
+            //     }
+            // }
+
             Request *request = parse(buf, readret, client_sock);
             respond(request, buf);
             // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
