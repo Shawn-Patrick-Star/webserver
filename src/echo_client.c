@@ -24,7 +24,7 @@
 
 #define ECHO_PORT 9999
 #define BUF_SIZE 4096
-
+#define KEEP_ALIVE
 int main(int argc, char* argv[])
 {
     if (argc != 4)
@@ -73,11 +73,19 @@ int main(int argc, char* argv[])
     send(sock, msg , strlen(msg), 0);
 
     char buf[BUF_SIZE];
+#ifdef KEEP_ALIVE
     while((bytes_received = recv(sock, buf, BUF_SIZE, 0)) > 1)
     {
         buf[bytes_received] = '\0';
         fprintf(stdout, "-------------Received-----------\n%s", buf);
     }
+#else
+    if((bytes_received = recv(sock, buf, BUF_SIZE, 0)) > 1)
+    {
+        buf[bytes_received] = '\0';
+        fprintf(stdout, "-------------Received-----------\n%s", buf);
+    }
+#endif
     // printf("bytes_received: %d\n", bytes_received);
 
     freeaddrinfo(servinfo);

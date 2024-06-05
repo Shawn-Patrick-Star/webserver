@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	{
 		// Just printing everything
 		printf("%s", buf);		
-		respond(request, buf);
+		respond(request, buf, buf);
 		printf("%s", buf);
 		// printf("Http Method %s\n", request->http_method);
 		// printf("Http Version %s\n", request->http_version);

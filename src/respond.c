@@ -56,33 +56,19 @@ void copyString(char *dest, const char *src, int len){
     }
 }
 
-void respond(Request *request, char* buf){
+void respond(Request *request, char* buf, const char * request_str){
     char path[128];
 
     if(request == NULL){
-        copyString(buf, "HTTP/1.1 400 Bad Request\r\n\r\n", 29);
+        create_packet("", "HTTP/1.1 400 Bad Request", 0, "html", buf);
         return;
     }
 
-    
-    // 404
-    // if(strIsEqual(request->http_uri, "/")){
-    //     sprintf(path, "%s", default_file_path);
-    // }
-    // else{
-    //     sprintf(path, "%s%s", "./static_site", request->http_uri);
-    // }
-    // FILE *file = fopen(path, "r");
-    // if(file == NULL){
-    //     fprintf(stderr, "Error opening file: %s\n", strerror(errno));
-    //     copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
-    //     return;
-    // }
-    // fclose(file);
 
     // 505
     if(!strIsEqual(request->http_version, "HTTP/1.1")){
-        copyString(buf, "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n", 43);
+        create_packet("", "HTTP/1.1 505 HTTP Version Not Supported", 0, "html", buf);
+        // copyString(buf, "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n", 43);
         return;
     }
 
@@ -93,13 +79,14 @@ void respond(Request *request, char* buf){
         handle_get_request(request, buf);
         break;
     case POST:
-        
+        create_packet(request_str, "HTTP/1.1 200 OK", strlen(request_str), "html", buf);
         break;
     case HEAD:
-        copyString(buf, "HTTP/1.1 200 OK\r\n\r\n", 19);    
+        create_packet("", "HTTP/1.1 200 OK", 0, "html", buf);
         break;
     default:
-        copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
+        create_packet("", "HTTP/1.1 501 Not Implemented", 0, "html", buf);
+        // copyString(buf, "HTTP/1.1 501 Not Implemented\r\n\r\n", 33);
         break;
     }
 
@@ -136,25 +123,29 @@ void handle_get_request(Request *request, char *buf){
         copyString(buf, "HTTP/1.1 404 Not Found\r\n\r\n", 27);
         return;
     }
-    char temp[1024];
-    int len = fread(temp, 1, 1024, fp);
 
+    char temp[1024];
+    int body_len = fread(temp, 1, 1024, fp);
+    create_packet(temp, "HTTP/1.1 200 OK", body_len, file_type, buf);
+    
+    fclose(fp);
+}
+
+
+void create_packet(const char* body, const char* statusLine, int body_len, char* file_type, char* packet){
     // 生成响应头
     char time_buffer[80];
     get_time(time_buffer, sizeof(time_buffer));
-
-    copyString(buf, "HTTP/1.1 200 OK\r\n", 17);
-    sprintf(buf, "%sServer: liso/1.0\r\n", buf);
-    sprintf(buf, "%sDate: %s\r\n", buf, time_buffer);
-    sprintf(buf, "%sContent-Length: %d\r\n", buf, len);
-    sprintf(buf, "%sContent-Type: text/%s\r\n\r\n", buf, file_type);
+    sprintf(packet, "%s\r\n", statusLine);
+    sprintf(packet, "%sServer: liso/1.0\r\n", packet);
+    sprintf(packet, "%sDate: %s\r\n", packet, time_buffer);
+    sprintf(packet, "%sContent-Length: %d\r\n", packet, body_len);
+    sprintf(packet, "%sContent-Type: text/%s\r\n\r\n", packet, file_type);
     // 生成响应体
-    int head_len = strlen(buf);
-    memcpy(buf + strlen(buf), temp, len);
-    buf[head_len + len] = '\0';
-
-    fclose(fp);
+    strcat(packet, body);
 }
+
+
 
 // void handle_head_request(Request *request, char *buf){
 

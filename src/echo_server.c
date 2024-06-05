@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
         }
 
         ssize_t readret = 0;
-        char buf[BUF_SIZE];
+        char buf[BUF_SIZE];// 读入全部请求
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
             printf("----------recv---------\n %s\n", buf);
@@ -96,15 +96,20 @@ int main(int argc, char* argv[])
             char* start = buf; 
             char* end;
             while((end = strstr(start, "\r\n\r\n")) != NULL){
-                char temp[512];
-                memset(temp, 0, 512);
+                char one_request[512];// 读入一次请求
+                memset(one_request, 0, 512);
                 int len = end - start + 4;
-                strncpy(temp, start, len);
-                // printf("----------recv---------\n %s\n", temp);
-                Request *request = parse(temp, len, client_sock);
-                respond(request, temp);
-                printf("----------send---------\n %s\n", temp);
-                if (send(client_sock, temp, strlen(temp), 0) != strlen(temp))
+                strncpy(one_request, start, len);
+
+                Request *request = parse(one_request, len, client_sock);
+                
+                char packet[1024];// 生成响应报文
+                memset(packet, 0, 1024);
+                respond(request, packet, one_request);
+
+                printf("----------send---------\n %s\n", packet);
+
+                if (send(client_sock, packet, strlen(packet), 0) != strlen(packet))
                 {
                     close_socket(client_sock);
                     close_socket(sock);
@@ -113,7 +118,6 @@ int main(int argc, char* argv[])
                 }
                 yylex_destroy();
                 start = end + 4;
-
             }
 
             // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");

@@ -30,6 +30,6 @@ HTTP_METHOD method_str2enum(char * method);
 
 void copyString(char *dest, const char *src, int len);
 
-void respond(Request *request, char* buf);
+void respond(Request *request, char* buf, const char * request_str);
 
 #endif //RESPOND_H
