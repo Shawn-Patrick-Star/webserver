@@ -75,7 +75,6 @@ int main(int argc, char* argv[])
     socklen_t cli_size;
     struct sockaddr_in cli_addr;
     
-
     /* finally, loop waiting for input and then write it back */
     while (1)
     {
