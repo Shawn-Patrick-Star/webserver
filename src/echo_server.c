@@ -35,44 +35,46 @@ int close_socket(int sock)
     return 1;
 }
 
+int initServer(int port){
+    fprintf(stdout, "----- Liso Server -----\n");
 
+    int sock;
 
-int main(int argc, char* argv[])
-{
-    int sock, client_sock;
-    ssize_t readret;
-    socklen_t cli_size;
-    struct sockaddr_in addr, cli_addr;
-    char buf[BUF_SIZE];
-
-    fprintf(stdout, "----- Echo Server -----\n");
-    
     /* all networked programs must create a socket */
     if ((sock = socket(PF_INET, SOCK_STREAM, 0)) == -1)
     {
         fprintf(stderr, "Failed creating socket.\n");
         return EXIT_FAILURE;
     }
-
+    struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(ECHO_PORT);
+    addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
 
     /* servers bind sockets to ports---notify the OS they accept connections */
-    if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)))
-    {
+    if (bind(sock, (struct sockaddr *) &addr, sizeof(addr))){
         close_socket(sock);
         fprintf(stderr, "Failed binding socket.\n");
         return EXIT_FAILURE;
     }
 
-
-    if (listen(sock, 5))
-    {
+    if (listen(sock, 5)){
         close_socket(sock);
         fprintf(stderr, "Error listening on socket.\n");
         return EXIT_FAILURE;
     }
+
+    return sock;
+}
+
+int main(int argc, char* argv[])
+{
+    int sock = initServer(ECHO_PORT);
+    
+    int client_sock;
+    socklen_t cli_size;
+    struct sockaddr_in cli_addr;
+    
 
     /* finally, loop waiting for input and then write it back */
     while (1)
@@ -85,42 +87,38 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
-        readret = 0;
-
+        ssize_t readret = 0;
+        char buf[BUF_SIZE];
         while((readret = recv(client_sock, buf, BUF_SIZE, 0)) >= 1)
         {
             printf("----------recv---------\n %s\n", buf);
-            // int count = 0;
-            // int start = 0;
-            // for(int i = 0; i < readret; i++){
-            //     if(strncmp(buf + i, "\r\n\r\n", 4) == 0){
-            //         char temp[512];
-            //         memset(temp, 0, 512);
-            //         strncpy(temp, buf + start, i + 4 - start);
-            //         // printf("-------------------\n %s\n", temp);
-            //         Request *request = parse(temp, readret, client_sock);
-            //         respond(request, temp);
-            //         printf("----------send---------\n %s\n", temp);
-            //         start = i + 4;
-            //         count++;
-            //     }
-            // }
+            // pipeline
+            char* start = buf; 
+            char* end;
+            while((end = strstr(start, "\r\n\r\n")) != NULL){
+                char temp[512];
+                memset(temp, 0, 512);
+                int len = end - start + 4;
+                strncpy(temp, start, len);
+                // printf("----------recv---------\n %s\n", temp);
+                Request *request = parse(temp, len, client_sock);
+                respond(request, temp);
+                printf("----------send---------\n %s\n", temp);
+                if (send(client_sock, temp, strlen(temp), 0) != strlen(temp))
+                {
+                    close_socket(client_sock);
+                    close_socket(sock);
+                    fprintf(stderr, "Error sending to client.\n");
+                    return EXIT_FAILURE;
+                }
+                yylex_destroy();
+                start = end + 4;
 
-            Request *request = parse(buf, readret, client_sock);
-            respond(request, buf);
-            // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
-            // ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
-            printf("----------send---------\n %s\n", buf);
-            if (send(client_sock, buf, strlen(buf), 0) != strlen(buf))
-            {
-                close_socket(client_sock);
-                close_socket(sock);
-                fprintf(stderr, "Error sending to client.\n");
-                return EXIT_FAILURE;
             }
 
-            // 非常重要的一步，释放 yylex 内存
-            yylex_destroy();
+            // ERROR_LOG(cli_addr, client_sock, "Error reading from client socket.");
+            // ACCESS_LOG(cli_addr, client_sock, "Access reading from client socket.");
+
             memset(buf, 0, BUF_SIZE);
         } 
 

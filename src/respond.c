@@ -153,7 +153,6 @@ void handle_get_request(Request *request, char *buf){
     memcpy(buf + strlen(buf), temp, len);
     buf[head_len + len] = '\0';
 
-
     fclose(fp);
 }
 
