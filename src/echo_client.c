@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     }
     int readRet = fread(msg, 1, BUF_SIZE, fp);
     int bytes_received;
-    fprintf(stdout, "-------------Sending-----------\n%s", msg);
+    // fprintf(stdout, "-------------Sending-----------\n%s", msg);
     send(sock, msg , strlen(msg), 0);
 
     char buf[BUF_SIZE];
